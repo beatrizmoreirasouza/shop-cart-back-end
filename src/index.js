@@ -1,5 +1,8 @@
 import express, { response } from "express";
 import { v4 as uuid } from "uuid";
+import userList from "./database/users.json";
+import writeDatabase from "./database/write";
+
 require("dotenv").config();
 
 const PORT = process.env.PORT || 3000;
@@ -10,7 +13,7 @@ server.get("/", (request, response) => {
   response.send("Hello Beautiful World!");
 });
 
-let list = [];
+let list = userList;
 
 server.get("/users", (request, response) => {
   response.json(list);
@@ -22,6 +25,7 @@ server.post("/users", (request, response) => {
     ...request.body,
   };
   list.push(user);
+  writeDatabase("users.json", list);
   response.send(user);
 });
 
@@ -45,6 +49,7 @@ server.put("/users/:id", (request, response) => {
     }
     return item;
   });
+  writeDatabase("users.json", list);
   response.json(user);
 });
 
@@ -54,6 +59,7 @@ server.delete("/users/:id", (request, response) => {
   if (index !== undefined) {
     list.splice(index, 1);
   }
+  writeDatabase("users.json", list);
   response.json({ message: "Ok" });
 });
 
